@@ -5,7 +5,7 @@ const axios = require('axios');
 const cors = require('cors');
 
 const app = express();
-const dbPath = process.env.DB_PATH || 'keys.db'; // Use environment variable for database path
+const dbPath = process.env.DB_PATH || 'keys.db'; 
 const db = new sqlite3.Database(dbPath);
 
 app.use(cors());
@@ -23,14 +23,14 @@ app.all('/:apiUrl', (req, res) => {
         const { encrypted_webhook, iv, key } = row;
 
         try {
-            // Decrypt the webhook URL
+            
             const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'hex'), Buffer.from(iv, 'hex'));
             let decrypted = decipher.update(encrypted_webhook, 'hex', 'utf8');
             decrypted += decipher.final('utf8');
 
             console.log('Decrypted webhook URL:', decrypted);
 
-            // Forward the request to the decrypted webhook URL
+            
             axios({
                 method: 'POST',
                 url: decrypted,
